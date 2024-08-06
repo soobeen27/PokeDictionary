@@ -41,15 +41,26 @@ class MainViewController: UIViewController {
         setLayout()
         setCollectionView()
         collectionViewCellSelected()
+        setupScrollViewTrigger()
     }
 
     func setCollectionView() {
+//        mainViewModel.pokeImages
+//            .observe(on: MainScheduler.instance)
+//            .bind(to: pokeCollectionView.rx.items(
+//                cellIdentifier: CellIdentifier.pokeCollectionViewCell,
+//                cellType: PokeCollectionViewCell.self)) { (row, element, cell) in
+//                cell.setImgae(pokeImage: element)
+//            }
+//            .disposed(by: disposeBag)
         mainViewModel.pokeImages
             .observe(on: MainScheduler.instance)
-            .bind(to: pokeCollectionView.rx.items(
-                cellIdentifier: CellIdentifier.pokeCollectionViewCell,
-                cellType: PokeCollectionViewCell.self)) { (row, element, cell) in
+            .bind(to: pokeCollectionView.rx.items) { (collectionView, row, element) in
+                let indexPath = IndexPath(row: row, section: 0)
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellIdentifier.pokeCollectionViewCell,
+                                                              for: indexPath) as! PokeCollectionViewCell
                 cell.setImgae(pokeImage: element)
+                return cell
             }
             .disposed(by: disposeBag)
     }
@@ -61,6 +72,25 @@ class MainViewController: UIViewController {
                 let detailVC = DetailViewController()
                 detailVC.detailViewModel.getPokeResult(data: self.mainViewModel.getPokeDetailUrl(index: indexPath.row))
                 self.navigationController?.pushViewController(detailVC, animated: true)
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    private func setupScrollViewTrigger() {
+        pokeCollectionView.rx.contentOffset
+            .observe(on: MainScheduler.instance)
+            .filter { [weak self] offset in
+                guard let self = self else { return false }
+                let contentHeight = self.pokeCollectionView.contentSize.height
+                let height = self.pokeCollectionView.frame.size.height
+                return offset.y > contentHeight - height * 2
+            }
+            .filter { [weak self] _ in
+                return !(self?.mainViewModel.isLoading ?? true)
+            }
+            .subscribe(onNext: { [weak self] _ in
+                self?.mainViewModel.limit += 20
+                self?.mainViewModel.fetchPokeList(limit: self?.mainViewModel.limit ?? 20)
             })
             .disposed(by: disposeBag)
     }

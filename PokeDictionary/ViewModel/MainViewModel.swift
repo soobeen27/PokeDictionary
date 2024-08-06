@@ -11,22 +11,30 @@ import RxSwift
 class MainViewModel {
     let pokeUrls = BehaviorSubject(value: [PokeResult]())
     let pokeImages = BehaviorSubject(value: [UIImage]())
+    var isLoading = false
+    var limit = 20
 
     private let disposeBag = DisposeBag()
     
     init() {
-        fetchPokeList()
+        fetchPokeList(limit: limit)
         fetchPokeImages()
     }
 
-    func fetchPokeList() {
-        let limit = 20
-        let offset = 0
-        guard let url = URL(string: PokeAPI.listUrlString(limit: String(limit), offset: String(offset))) else { return }
+    func fetchPokeList(limit: Int) {
+        isLoading = true
+        guard let url = URL(string: PokeAPI.listUrlString(limit: String(limit), offset: String(limit - 20))) else { return }
         NetworkManager.shared.fetch(url: url).subscribe(onSuccess: {
             [weak self] (pokeResponse: PokeList) in
-            guard let self = self else { return }
-            self.pokeUrls.onNext(pokeResponse.results)
+            guard let self else { return }
+            var currentResults = try! self.pokeUrls.value()
+            currentResults.append(contentsOf: pokeResponse.results)
+            
+            self.pokeUrls.onNext(currentResults)
+            self.isLoading = false
+        }, onFailure: { [weak self] error in
+            guard let self else { return }
+            self.isLoading = false
         })
         .disposed(by: disposeBag)
     }
