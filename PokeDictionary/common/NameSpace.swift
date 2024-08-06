@@ -14,3 +14,8 @@ struct PokeAPI {
         return "https://pokeapi.co/api/v2/pokemon?limit=\(limit)&offset=\(offset)"
     }
 }
+
+struct CellIdentifier {
+    private init() {}
+    static let pokeCollectionViewCell = "PokeCollectionViewCell"
+}
