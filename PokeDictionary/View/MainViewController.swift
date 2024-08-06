@@ -64,7 +64,7 @@ class MainViewController: UIViewController {
             })
             .disposed(by: disposeBag)
     }
-    
+
     private func setLayout() {
         view.backgroundColor = .mainRed
         

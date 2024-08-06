@@ -20,8 +20,19 @@ struct PokeDetail: Codable {
     let name: String?
     let height: Int?
     let weight: Int?
+    let types: [PokeTypes]?
 //    let sprites: PokeSprites?
 }
+
+struct PokeTypes: Codable {
+    let type: PokeType?
+}
+
+struct PokeType: Codable {
+    let name: String?
+}
+
+
 //
 //struct PokeSprites: Codable {
 //    let other: PokeOther?

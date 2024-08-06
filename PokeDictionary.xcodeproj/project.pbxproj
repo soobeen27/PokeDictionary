@@ -23,6 +23,7 @@
 		F46AED5A2C62049500C085DC /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F46AED592C62049500C085DC /* Extension.swift */; };
 		F46AED5C2C62136400C085DC /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F46AED5B2C62136400C085DC /* DetailViewController.swift */; };
 		F46AED5E2C6214BC00C085DC /* DetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F46AED5D2C6214BC00C085DC /* DetailViewModel.swift */; };
+		F46AED622C62649000C085DC /* PokemonTranslator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F46AED612C62649000C085DC /* PokemonTranslator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +42,7 @@
 		F46AED592C62049500C085DC /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
 		F46AED5B2C62136400C085DC /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		F46AED5D2C6214BC00C085DC /* DetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewModel.swift; sourceTree = "<group>"; };
+		F46AED612C62649000C085DC /* PokemonTranslator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonTranslator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,6 +98,7 @@
 				F41A73F52C6091BD000E9085 /* NetworkManager.swift */,
 				F41A74072C60972C000E9085 /* NameSpace.swift */,
 				F46AED592C62049500C085DC /* Extension.swift */,
+				F46AED612C62649000C085DC /* PokemonTranslator.swift */,
 			);
 			path = common;
 			sourceTree = "<group>";
@@ -214,6 +217,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F41A74022C6095B7000E9085 /* MainViewModel.swift in Sources */,
+				F46AED622C62649000C085DC /* PokemonTranslator.swift in Sources */,
 				F41A73F62C6091BD000E9085 /* NetworkManager.swift in Sources */,
 				F41A73E52C608977000E9085 /* MainViewController.swift in Sources */,
 				F41A74052C6095E1000E9085 /* Model.swift in Sources */,
