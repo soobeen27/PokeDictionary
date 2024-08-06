@@ -69,5 +69,11 @@ class MainViewModel {
             return Disposables.create()
         }
     }
+    // collectionview selected 됐을때 데이터 전달
+    func getPokeDetailUrl(index: Int) -> Observable<PokeResult>{
+        return pokeUrls.compactMap { array in
+            array.indices.contains(index) ? array[index] : nil
+        }
+    }
 }
 

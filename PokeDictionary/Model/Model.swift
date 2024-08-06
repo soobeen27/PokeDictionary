@@ -16,27 +16,30 @@ struct PokeResult: Codable {
 }
 
 struct PokeDetail: Codable {
+    let id: Int?
     let name: String?
-    let sprites: PokeSprites?
+    let height: Int?
+    let weight: Int?
+//    let sprites: PokeSprites?
 }
-
-struct PokeSprites: Codable {
-    let other: PokeOther?
-}
-
-struct PokeOther: Codable {
-    let officialArtwork: PokeImage?
-    
-    enum CodingKeys: String, CodingKey {
-        case officialArtwork = "official-artwork"
-    }
-}
-
-struct PokeImage: Codable {
-    let urlString: String?
-    
-    enum CodingKeys: String, CodingKey {
-        case urlString = "front_default"
-    }
-}
+//
+//struct PokeSprites: Codable {
+//    let other: PokeOther?
+//}
+//
+//struct PokeOther: Codable {
+//    let officialArtwork: PokeImage?
+//    
+//    enum CodingKeys: String, CodingKey {
+//        case officialArtwork = "official-artwork"
+//    }
+//}
+//
+//struct PokeImage: Codable {
+//    let urlString: String?
+//    
+//    enum CodingKeys: String, CodingKey {
+//        case urlString = "front_default"
+//    }
+//}
 

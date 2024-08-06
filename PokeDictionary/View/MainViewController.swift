@@ -11,7 +11,7 @@ import RxSwift
 import RxCocoa
 
 class MainViewController: UIViewController {
-    let mainViewModel = MainViewModel()
+    var mainViewModel = MainViewModel()
     let disposeBag = DisposeBag()
     
     lazy var pokeBallImageView: UIImageView = {
@@ -59,6 +59,7 @@ class MainViewController: UIViewController {
             .subscribe(onNext: { [weak self] indexPath in
                 guard let self else { return }
                 let detailVC = DetailViewController()
+                detailVC.detailViewModel.getPokeResult(data: self.mainViewModel.getPokeDetailUrl(index: indexPath.row))
                 self.navigationController?.pushViewController(detailVC, animated: true)
             })
             .disposed(by: disposeBag)

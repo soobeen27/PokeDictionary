@@ -9,27 +9,31 @@ import Foundation
 import RxSwift
 
 class DetailViewModel {
-    var pokeDetails: PublishSubject<PokeDetail>?
+    var pokeDetail = PublishSubject<PokeDetail>()
+    var pokeResult = PublishSubject<PokeResult>()
     
     private let disposeBag = DisposeBag()
     
+    init() {
+        fetchPokeDetail()
+    }
+    
+    func getPokeResult(data: Observable<PokeResult>) {
+        data.bind(to: pokeResult)
+            .disposed(by: disposeBag)
+    }
+    
     func fetchPokeDetail() {
-//        pokeUrls.subscribe(onNext: { pokeUrls in
-//            let details = pokeUrls.map { pokeUrl -> Single<PokeDetail> in
-//                guard let url = URL(string: pokeUrl.url!) else {
-//                    return .error(NetworkError.invalidUrl)
-//                }
-//                return NetworkManager.shared.fetch(url: url)
-//            }
-//            Observable.from(details)
-//                .concat()
-//                .toArray()
-//                .subscribe(onSuccess: { [weak self] details in
-//                guard let self = self else { return }
-//                self.pokeDetails.onNext(details)
-//            })
-//            .disposed(by: self.disposeBag)
-//        })
-//        .disposed(by: disposeBag)
+        pokeResult.subscribe(onNext: { [weak self] result in
+            guard let self,
+                  let urlString = result.url,
+                  let url = URL(string: urlString) else { return }
+            
+            NetworkManager.shared.fetch(url: url).subscribe(onSuccess: { (detail: PokeDetail) in
+                print(detail)
+                self.pokeDetail.onNext(detail)
+            }).disposed(by: self.disposeBag)
+        })
+        .disposed(by: disposeBag)
     }
 }
