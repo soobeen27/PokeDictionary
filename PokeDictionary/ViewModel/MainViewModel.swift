@@ -10,7 +10,6 @@ import RxSwift
 
 class MainViewModel {
     let pokeUrls = BehaviorSubject(value: [PokeResult]())
-    let pokeDetails = BehaviorSubject(value: [PokeDetail]())
     let pokeImages = BehaviorSubject(value: [UIImage]())
 
     private let disposeBag = DisposeBag()
@@ -28,26 +27,6 @@ class MainViewModel {
             [weak self] (pokeResponse: PokeList) in
             guard let self = self else { return }
             self.pokeUrls.onNext(pokeResponse.results)
-        })
-        .disposed(by: disposeBag)
-    }
-
-    func fetchPokeDetail() {
-        pokeUrls.subscribe(onNext: { pokeUrls in
-            let details = pokeUrls.map { pokeUrl -> Single<PokeDetail> in
-                guard let url = URL(string: pokeUrl.url!) else {
-                    return .error(NetworkError.invalidUrl)
-                }
-                return NetworkManager.shared.fetch(url: url)
-            }
-            Observable.from(details)
-                .concat()
-                .toArray()
-                .subscribe(onSuccess: { [weak self] details in
-                guard let self = self else { return }
-                self.pokeDetails.onNext(details)
-            })
-            .disposed(by: self.disposeBag)
         })
         .disposed(by: disposeBag)
     }

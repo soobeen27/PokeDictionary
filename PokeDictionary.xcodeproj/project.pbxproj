@@ -21,6 +21,8 @@
 		F41A74082C60972C000E9085 /* NameSpace.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41A74072C60972C000E9085 /* NameSpace.swift */; };
 		F46AED582C61F39200C085DC /* PokeCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F46AED572C61F39200C085DC /* PokeCollectionViewCell.swift */; };
 		F46AED5A2C62049500C085DC /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F46AED592C62049500C085DC /* Extension.swift */; };
+		F46AED5C2C62136400C085DC /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F46AED5B2C62136400C085DC /* DetailViewController.swift */; };
+		F46AED5E2C6214BC00C085DC /* DetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F46AED5D2C6214BC00C085DC /* DetailViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +39,8 @@
 		F41A74072C60972C000E9085 /* NameSpace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameSpace.swift; sourceTree = "<group>"; };
 		F46AED572C61F39200C085DC /* PokeCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokeCollectionViewCell.swift; sourceTree = "<group>"; };
 		F46AED592C62049500C085DC /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
+		F46AED5B2C62136400C085DC /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
+		F46AED5D2C6214BC00C085DC /* DetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,6 +112,7 @@
 			children = (
 				F41A73E42C608977000E9085 /* MainViewController.swift */,
 				F46AED572C61F39200C085DC /* PokeCollectionViewCell.swift */,
+				F46AED5B2C62136400C085DC /* DetailViewController.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -116,6 +121,7 @@
 			isa = PBXGroup;
 			children = (
 				F41A74012C6095B7000E9085 /* MainViewModel.swift */,
+				F46AED5D2C6214BC00C085DC /* DetailViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -214,7 +220,9 @@
 				F46AED5A2C62049500C085DC /* Extension.swift in Sources */,
 				F41A74082C60972C000E9085 /* NameSpace.swift in Sources */,
 				F46AED582C61F39200C085DC /* PokeCollectionViewCell.swift in Sources */,
+				F46AED5C2C62136400C085DC /* DetailViewController.swift in Sources */,
 				F41A73E12C608977000E9085 /* AppDelegate.swift in Sources */,
+				F46AED5E2C6214BC00C085DC /* DetailViewModel.swift in Sources */,
 				F41A73E32C608977000E9085 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

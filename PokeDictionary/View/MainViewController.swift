@@ -21,7 +21,7 @@ class MainViewController: UIViewController {
         return iv
     }()
     
-    lazy var pokeCollectView: UICollectionView = {
+    lazy var pokeCollectionView: UICollectionView = {
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.scrollDirection = .vertical
         let collectionCellWidth = (view.frame.width) / 3
@@ -40,12 +40,13 @@ class MainViewController: UIViewController {
         super.viewDidLoad()
         setLayout()
         setCollectionView()
+        collectionViewCellSelected()
     }
 
     func setCollectionView() {
         mainViewModel.pokeImages
             .observe(on: MainScheduler.instance)
-            .bind(to: pokeCollectView.rx.items(
+            .bind(to: pokeCollectionView.rx.items(
                 cellIdentifier: CellIdentifier.pokeCollectionViewCell,
                 cellType: PokeCollectionViewCell.self)) { (row, element, cell) in
                 cell.setImgae(pokeImage: element)
@@ -53,10 +54,20 @@ class MainViewController: UIViewController {
             .disposed(by: disposeBag)
     }
     
+    func collectionViewCellSelected() {
+        pokeCollectionView.rx.itemSelected
+            .subscribe(onNext: { [weak self] indexPath in
+                guard let self else { return }
+                let detailVC = DetailViewController()
+                self.navigationController?.pushViewController(detailVC, animated: true)
+            })
+            .disposed(by: disposeBag)
+    }
+    
     private func setLayout() {
         view.backgroundColor = .mainRed
         
-        [pokeBallImageView, pokeCollectView]
+        [pokeBallImageView, pokeCollectionView]
             .forEach {
                 view.addSubview($0)
             }
@@ -65,7 +76,7 @@ class MainViewController: UIViewController {
             $0.top.equalToSuperview().offset(64)
             $0.size.equalTo(CGSize(width: 64, height: 64))
         }
-        pokeCollectView.snp.makeConstraints {
+        pokeCollectionView.snp.makeConstraints {
             $0.top.equalTo(pokeBallImageView.snp.bottom).offset(40)
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
