@@ -30,7 +30,8 @@ class MainViewController: UIViewController {
         flowLayout.minimumLineSpacing = 0
 
         let collect = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
-        collect.register(PokeCollectionViewCell.self, forCellWithReuseIdentifier: CellIdentifier.pokeCollectionViewCell)
+        collect.register(PokeCollectionViewCell.self, 
+                         forCellWithReuseIdentifier: CellIdentifier.pokeCollectionViewCell)
         collect.backgroundColor = .darkRed
         return collect
     }()
@@ -44,7 +45,9 @@ class MainViewController: UIViewController {
     func setCollectionView() {
         mainViewModel.pokeImages
             .observe(on: MainScheduler.instance)
-            .bind(to: pokeCollectView.rx.items(cellIdentifier: CellIdentifier.pokeCollectionViewCell, cellType: PokeCollectionViewCell.self)) { (row, element, cell) in
+            .bind(to: pokeCollectView.rx.items(
+                cellIdentifier: CellIdentifier.pokeCollectionViewCell,
+                cellType: PokeCollectionViewCell.self)) { (row, element, cell) in
                 cell.setImgae(pokeImage: element)
             }
             .disposed(by: disposeBag)

@@ -17,7 +17,6 @@ class MainViewModel {
     
     init() {
         fetchPokeList()
-        fetchPokeDetail()
         fetchPokeImages()
     }
 
@@ -29,7 +28,8 @@ class MainViewModel {
             [weak self] (pokeResponse: PokeList) in
             guard let self = self else { return }
             self.pokeUrls.onNext(pokeResponse.results)
-        }).disposed(by: disposeBag)
+        })
+        .disposed(by: disposeBag)
     }
 
     func fetchPokeDetail() {
@@ -40,24 +40,40 @@ class MainViewModel {
                 }
                 return NetworkManager.shared.fetch(url: url)
             }
-            Observable.from(details).concat().toArray().subscribe(onSuccess: { [weak self] details in
+            Observable.from(details)
+                .concat()
+                .toArray()
+                .subscribe(onSuccess: { [weak self] details in
                 guard let self = self else { return }
                 self.pokeDetails.onNext(details)
-            }).disposed(by: self.disposeBag)
-        }).disposed(by: disposeBag)
+            })
+            .disposed(by: self.disposeBag)
+        })
+        .disposed(by: disposeBag)
     }
     
     func fetchPokeImages() {
-        pokeDetails.subscribe(onNext: { details in
-            let images = details.map { [weak self] detail -> Single<UIImage> in
-                guard let url = URL(string: detail.sprites?.other?.officialArtwork?.urlString ?? ""), let self = self else { return .error(NetworkError.invalidUrl) }
-                return fetchImage(url)
+        pokeUrls.subscribe(onNext: { urls in
+            let images = urls.map { [weak self] url -> Single<UIImage> in
+                guard let self,
+                      let pokeUrl = url.url,
+                      let pokeID = pokeUrl.getPokeID,
+                      let imageUrl = PokeAPI.imageUrl(id: pokeID)
+                else {
+                    return .error(NetworkError.invalidUrl)
+                }
+                return self.fetchImage(imageUrl)
             }
-            Observable.from(images).concat().toArray().subscribe(onSuccess: {[weak self] images in
-                guard let self = self else { return }
+            Observable.from(images)
+                .concat()
+                .toArray()
+                .subscribe(onSuccess: {[weak self] images in
+                guard let self else { return }
                 self.pokeImages.onNext(images)
-            }).disposed(by: self.disposeBag)
-        }).disposed(by: disposeBag)
+            })
+            .disposed(by: self.disposeBag)
+        })
+        .disposed(by: disposeBag)
     }
     
     func fetchImage(_ url: URL) -> Single<UIImage> {
