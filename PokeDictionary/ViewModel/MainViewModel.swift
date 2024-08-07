@@ -7,81 +7,67 @@
 
 import UIKit
 import RxSwift
+import RxCocoa
 
 class MainViewModel {
-    let pokeUrls = BehaviorSubject(value: [PokeResult]())
-    let pokeImages = BehaviorSubject(value: [UIImage]())
+    let pokeImages = BehaviorRelay(value: [UIImage]())
     var isLoading = false
-    var limit = 20
+    var offset = 1
 
     private let disposeBag = DisposeBag()
     
     init() {
-        fetchPokeList(limit: limit)
         fetchPokeImages()
     }
 
-    func fetchPokeList(limit: Int) {
-        isLoading = true
-        guard let url = URL(string: PokeAPI.listUrlString(limit: String(limit), offset: String(limit - 20))) else { return }
-        NetworkManager.shared.fetch(url: url).subscribe(onSuccess: {
-            [weak self] (pokeResponse: PokeList) in
-            guard let self else { return }
-            var currentResults = try! self.pokeUrls.value()
-            currentResults.append(contentsOf: pokeResponse.results)
-            
-            self.pokeUrls.onNext(currentResults)
-            self.isLoading = false
-        }, onFailure: { [weak self] error in
-            guard let self else { return }
-            self.isLoading = false
-        })
-        .disposed(by: disposeBag)
-    }
-    
     func fetchPokeImages() {
-        pokeUrls.subscribe(onNext: { urls in
-            let images = urls.map { [weak self] url -> Single<UIImage> in
-                guard let self,
-                      let pokeUrl = url.url,
-                      let pokeID = pokeUrl.getPokeID,
-                      let imageUrl = PokeAPI.imageUrl(id: pokeID)
-                else {
-                    return .error(NetworkError.invalidUrl)
-                }
-                return self.fetchImage(imageUrl)
+        guard !isLoading else { return }
+        isLoading = true
+        
+        let startId = offset
+        let endId = offset + 19
+        let imageSingles = (startId...endId)
+            .compactMap { [weak self] id -> Single<UIImage>? in
+            guard let self = self, let url = PokeAPI.imageUrl(id: "\(id)") else {
+                return nil
             }
-            Observable.from(images)
-                .concat()
-                .toArray()
-                .subscribe(onSuccess: {[weak self] images in
-                guard let self else { return }
-                self.pokeImages.onNext(images)
+            return self.fetchImage(url)
+        }
+
+        Single.zip(imageSingles)
+            .subscribe(onSuccess: { [weak self] newImages in
+                guard let self = self else { return }
+                var currentImages = self.pokeImages.value
+                currentImages.append(contentsOf: newImages)
+                self.pokeImages.accept(currentImages)
+                self.offset += 20
+                self.isLoading = false
+            }, onFailure: { [weak self] _ in
+                self?.isLoading = false
             })
-            .disposed(by: self.disposeBag)
-        })
-        .disposed(by: disposeBag)
+            .disposed(by: disposeBag)
     }
     
     func fetchImage(_ url: URL) -> Single<UIImage> {
         return Single.create { observer in
-            if let data = try? Data(contentsOf: url) {
-                if let image = UIImage(data: data) {
+            let task = URLSession.shared.dataTask(with: url) { data, response, error in
+                if let error = error {
+                    observer(.failure(error))
+                } else if let data = data, let image = UIImage(data: data) {
                     observer(.success(image))
                 } else {
                     observer(.failure(NetworkError.dataFetchFail))
                 }
-            } else {
-                observer(.failure(NetworkError.invalidUrl))
             }
-            return Disposables.create()
+            task.resume()
+            return Disposables.create {
+                task.cancel()
+            }
         }
     }
-    // collectionview selected 됐을때 데이터 전달
-    func getPokeDetailUrl(index: Int) -> Observable<PokeResult>{
-        return pokeUrls.compactMap { array in
-            array.indices.contains(index) ? array[index] : nil
-        }
+
+    func getPokeID(index: Int) -> Observable<Int>{
+        return Observable.just(index)
     }
 }
 

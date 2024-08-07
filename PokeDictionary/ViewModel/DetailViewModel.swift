@@ -11,7 +11,8 @@ import RxCocoa
 
 class DetailViewModel {
     var pokeDetail = PublishSubject<PokeDetail>()
-    var pokeResult = PublishSubject<PokeResult>()
+//    var pokeResult = PublishSubject<PokeResult>()
+    var id = PublishSubject<Int>()
     var pokeImage = PublishSubject<UIImage>()
     
     private let disposeBag = DisposeBag()
@@ -19,20 +20,16 @@ class DetailViewModel {
     init() {
         fetchPokeDetail()
     }
-    
-    func getPokeResult(data: Observable<PokeResult>) {
-        data.bind(to: pokeResult)
+    func getID(id: Observable<Int>) {
+        id.bind(to: self.id)
             .disposed(by: disposeBag)
     }
     
     func fetchPokeDetail() {
-        pokeResult.subscribe(onNext: { [weak self] result in
+        id.subscribe(onNext: { [weak self] id in
             guard let self,
-                  let urlString = result.url,
-                  let detailUrl = URL(string: urlString) else { return }
-            
-            NetworkManager.shared.fetch(url: detailUrl).subscribe(onSuccess: { (detail: PokeDetail) in
-                print(detail)
+                  let url = PokeAPI.detailUrl(id: id) else { return }
+            NetworkManager.shared.fetch(url: url).subscribe(onSuccess: { (detail: PokeDetail) in
                 self.pokeDetail.onNext(detail)
                 guard let id = detail.id,
                       let imageUrl = PokeAPI.imageUrl(id: "\(id)")
@@ -41,8 +38,8 @@ class DetailViewModel {
                     self.pokeImage.onNext(image)
                 }).disposed(by: self.disposeBag)
             }).disposed(by: self.disposeBag)
-        })
-        .disposed(by: disposeBag)
+        }).disposed(by: disposeBag)
+
     }
     
     func fetchImage(_ url: URL) -> Single<UIImage> {

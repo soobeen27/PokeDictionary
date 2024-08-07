@@ -18,6 +18,10 @@ struct PokeAPI {
         else { return nil}
         return url
     }
+    static func detailUrl(id: Int) -> URL? {
+        guard let url = URL(string: "https://pokeapi.co/api/v2/pokemon/\(id)/") else { return nil}
+        return url
+    }
 }
 
 struct CellIdentifier {
